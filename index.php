@@ -30,8 +30,10 @@
         <input id="tt-submit-time" type="button" value="Submit Time" data-icon="clock">
       </form>
       <div id="tt-clock">00:00:00</div>
+      <div id="tt-map"></div>
     </div>
   </div>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCMOJ7tMgYv_L27bb8KbI7USRivFvwrjro"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

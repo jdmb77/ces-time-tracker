@@ -39,7 +39,7 @@ $(document).on("pageinit", "#tt-page", () => {
     .done((data) => {
       let jobSelectList = ''
       for (job in data) {
-        jobSelectList += `<option value="${data[job].JobID}">${data[job].JobName}</option>`
+        jobSelectList += `<option data-lat="${data[job].Latitude}" data-lng="${data[job].Longitude}" value="${data[job].JobID}">${data[job].JobName}</option>`
       }
       $('#tt-select-job').append(`<option value="" selected="selected">--- JOBS ---</option>${jobSelectList}`)
       const selectText = $('body').find('span')
@@ -63,11 +63,44 @@ $(document).on("pageinit", "#tt-page", () => {
       console.error(`getAllEmployees.php failed: Status: ${textStatus}, Error: ${error}`)
     })
 
-  function notifications(type = "success", icon = "ok", msg = "Time submitted!") {
-    let alertHTML = `<div class="alert alert-${type}" role="alert"><span class="glyphicon glyphicon-${icon}"></span> ${msg}</div>`
+  function notifications(type = "success", icon = "check", msg = "Time submitted!") {
+    let alertHTML = `<div class="alert alert-${type}"><a href="#" class="ui-btn ui-shadow ui-corner-all ui-icon-${icon} ui-btn-icon-notext"></a> <h4>${msg}</h4></div>`
     $('#tt-messages').html(alertHTML)
     $('#tt-messages').show()
   }
+
+  function getEmployeeRec (employeeID) {
+    $.ajax({
+      method: "POST",
+      data: { 'EmployeeID': employeeID },
+      url: "data/getTimeByID.php",
+      dataType: "JSON"
+    })
+    .done((data, textStatus, jqXHR) => {
+      console.log(data)
+      notifications()
+      $('#tt-messages').fadeOut(5000)
+    })
+    .fail(( jqXHR, textStatus, errorThrown) => {
+      console.error(textStatus, errorThrown)    
+    })
+  }
+
+  $('#tt-select-job').bind('change', (e) => {
+    let jobMapLat = $('#tt-select-job').find(':selected').data('lat')
+    let jobMapLng = $('#tt-select-job').find(':selected').data('lng')
+    let jobLoc = { lat: parseFloat(jobMapLat), lng: parseFloat(jobMapLng) }
+
+    let map = new google.maps.Map(document.getElementById('tt-map'), {
+      zoom: 12,
+      center: jobLoc
+    })
+
+    let marker = new google.maps.Marker({
+      position: jobLoc,
+      map: map
+    })
+  })
 
   $('#tt-submit-time').bind('click', (e) => {
     let formValues = $('#tt-form').serializeArray()
@@ -76,7 +109,7 @@ $(document).on("pageinit", "#tt-page", () => {
     let endTime = formValues[2].value
 
     if (jobID != NaN && employeeID != NaN && endTime != "0") {
-      if(typeof(Storage) != undefined) {
+      if (typeof(Storage) != undefined) {
         let timeSubmitted = {'JobID': jobID, 'EmployeeID': employeeID, 'EndTime': endTime}
         localStorage.setItem('last_recorded_time', JSON.stringify(timeSubmitted))
       }
@@ -86,16 +119,16 @@ $(document).on("pageinit", "#tt-page", () => {
         url: "data/insertTime.php",
         dataType: "JSON"
       })
-      .done(function(data, textStatus, jqXHR) {
-        notifications()
-        $('#tt-messages').fadeOut(5000)
+      .done((data, textStatus, jqXHR) => {
+        getEmployeeRec(employeeID)     
         let locallyStored = localStorage.getItem('last_recorded_time')
-        console.log(JSON.parse(locallyStored))        
+        console.log(JSON.parse(locallyStored))   
       })
-      .fail(function( jqXHR, textStatus, errorThrown) {
+      .fail(( jqXHR, textStatus, errorThrown) => {
         console.error(textStatus, errorThrown)    
       })
+    } else if (jobID == NaN || employeeID == NaN || endTime == "0") {
+      notifications("danger", "alert", "Please select all options!")
     }
-    notifications("danger", "warning-sign", "Please select all options!")
   })
 })

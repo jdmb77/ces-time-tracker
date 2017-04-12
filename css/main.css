@@ -11,6 +11,7 @@ select {
 }
 
 #tt-header {
+  color: #728a72;
   text-align: center;
   text-transform: uppercase;
   font-size: 1.5em;
@@ -31,6 +32,7 @@ select {
 }
 
 #tt-clock {
+  color: #728a72;
   font-size: 5em;
   font-weight: bold;
   text-align: center;
@@ -45,7 +47,52 @@ select {
   background: #f00;
 }
 
+#tt-map {
+  height: 200px;
+  width: 100%;
+}
+
 .ui-content .ui-slider-switch {
   width: 9em;
   margin: 0 auto;
+}
+
+.ui-focus {
+  box-shadow: 0 0 12px #728a72 !important;
+}
+
+.ui-btn-active {
+  background-color: #728a72 !important;
+  border-color: #728a72 !important;
+  text-shadow: 0 1px 0 #728a72 !important;
+}
+
+.alert {
+  background-color: #eee;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+  height: 45px;
+  padding: 3px;
+}
+
+.alert > a {
+  float: left;
+}
+
+.alert > h4 {
+  margin-top: 12px;
+  font-weight: normal;
+}
+
+.alert-danger {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
 }

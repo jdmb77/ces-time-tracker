@@ -11,8 +11,8 @@
 		exit;
 	}
 	// Retreive param from http POST
-	//$ID = $_POST['ID'];
-	$ID = 2;
+	$ID = $_POST['EmployeeID'];
+
 	if ($ID) {
 
 		$result = $mysqli->query("CALL sp_getTimeByID('". $ID ."')");
